@@ -20,14 +20,14 @@ class Dewey {
      *  @return array   tuple array -> array($minNumber, $maxNumber)
      */
 
-    public static function calculateRange($rangeStr) {
+    public static function calculateRange($rangeString) {
         $min = "";
         $max = "";
 
-        $decimalLocation = stripos($rangeStr, ".");
+        $decimalLocation = stripos($rangeString, ".");
 
         // master number w/o decimal (we'll replace it later)
-        $master = preg_replace(array("/\./", "/\s/"), "", $rangeStr);
+        $master = preg_replace(array("/\./", "/\s/"), "", $rangeString);
         $length = strlen($master);
         $lastCharPlace = $length - 1;
         $xPos = array();
