@@ -150,7 +150,7 @@ class Dewey {
         $additionalInfo = $matches[4];
 
         $cn = new Dewey\CallNumber;
-        $cn->setCallNumber($major . $minor);
+        $cn->setCallNumber($major . "." . $minor);
         $cn->setCutter($cutter);
         $cn->setAdditional($additionalInfo);
 

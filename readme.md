@@ -63,10 +63,10 @@ Builds a `Dewey\CallNumber` object from the provided string.
 #### example ####
 
 ```php
-var_dump(Dewey::parseCallNumber("741.4372 A123x"))
+var_dump(Dewey::parseCallNumber("741.4372 A123x"));
 // object(Dewey\CallNumber)#2 (3) {
 //  ["callNumber":protected]=>
-//  string(7) "7414372"
+//  string(7) "741.4372"
 //  ["cutter":protected]=>
 //  string(5) "A123x"
 //  ["additional":protected]=>
