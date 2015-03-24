@@ -115,6 +115,22 @@ class Dewey {
     }
 
     /**
+     *  static wrapper for checking if a call number is within a range
+     *
+     *  @param  mixed       base DDS call number, can be string or Dewey\CallNumber object
+     *  @param  mixed       range to check against
+     *  @param  boolean     whether to include $max in equation  (true for LTEQ, false for LT)
+     */
+
+    public static function inRange($input, $range, $lessThanEqualTo = true) {
+        if ( !is_a($input, "Dewey\CallNumber") ) {
+            $input = self::parseCallNumber($input);
+        }
+
+        return $input->inRange($range, $lessThanEqualTo);
+    }
+
+    /**
      *  parses a Dewey\CallNumber object from a DDS call number string
      *
      *  @param  string              DDS call number input
