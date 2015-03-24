@@ -14,10 +14,10 @@ class Dewey {
         }
 
         // check for longest field to pad
-        $inputCNLength = $input->getCallNumberLength();
-        $compCNLength = $comp->getCallNumberLength();
-        $inputCTLength = $input->getCutterLength();
-        $compCTLength = $comp->getCutterLength();
+        $inputCNLength = $input->getNormalizedCallNumberLength();
+        $compCNLength = $comp->getNormalizedCallNumberLength();
+        $inputCTLength = $input->getNormalizedCutterLength();
+        $compCTLength = $comp->getNormalizedCutterLength();
 
         $padding = array(
             'callNumber' => $inputCNLength > $compCNLength ? $inputCNLength : $compCNLength,
@@ -28,11 +28,13 @@ class Dewey {
         $compNormalized = $comp->calculateNormalized($padding);
 
         switch($operator) {
-            case ">": return $inputNormalized > $compNormalized;
-            case "<": return $inputNormalized < $compNormalized;
+            case ">":  return $inputNormalized >  $compNormalized;
+            case "<":  return $inputNormalized <  $compNormalized;
             case "<=": return $inputNormalized <= $compNormalized;
             case ">=": return $inputNormalized >= $compNormalized;
             case "==": return $inputNormalized == $compNormalized;
+
+            // unneccessary but available
             case "===": return $inputNormalized === $compNormalized;
             default: throw new Exception("Unrecognized operator: [{$operator}]");
         }
