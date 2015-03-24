@@ -97,8 +97,24 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testInRange() {
-        $this->assertTrue($this->cn->inRange(array("510", "520")));
-        $this->assertTrue($this->cn->inRange("514", "515"));
+        $ranges = array("51x", "514.x", "514.1x", "514.12x", "514.123x");
+        foreach($ranges as $range) {
+            $this->assertTrue(
+                $this->cn->inRange($range),
+                'inRange string works with range string: [' . $range . ']'
+            );
+        }
+
+        $this->assertTrue(
+            $this->cn->inRange(array("510", "520")),
+            'inRange works with range tuple'
+        );
+    }
+
+    public function testInRangeLessThanMax() {
+        $newCN = \Dewey::parseCallNumber("515");
+        $this->assertTrue($newCN->inRange("514.x"));
+        $this->assertFalse($newCN->inRange("514.x", false));
     }
 
     public function testLessThan() {

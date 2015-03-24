@@ -160,24 +160,23 @@ class CallNumber {
      *  does this call number fall between the ranges specified? can use
      *  DDS call number string or a Dewey\CallNumber object
      *
-     *  @param  mixed   either a min call number or a tuple w/ min and max
-     *  @param  mixed   optional max call number (not used if $min is a tuple)
-     *  @param  boolean whether to equate the max as lessThan or lessThanEqualTo (true for lessThan; false for LTEQ)
+     *  @param  mixed       either a range string (using `x` to denote the area of range, or a tuple of min/max)
+     *  @param  boolean     whether to include $max in equation  (true for LTEQ, false for LT)
      *  @return boolean 
      */
 
-    public function inRange($min, $max = null, $lessThanMax = true) {
-        if ( is_array($min) ) {
-            $max = $min[1];
-            $min = $min[0];
+    public function inRange($range, $lessThanEqualTo = true) {
+        if ( is_string($range) ) {
+            $range = \Dewey::calculateRange($range);
         }
 
-        if ( is_bool($max) ) {
-            $lessThanMax = $max;
-        }
+        list($min, $max) = $range;
 
         return $this->greaterThanEqualTo($min) 
-            && ($lessThanMax ? $this->lessThan($max) : $this->lessThanEqualTo($max))
+            && (!!$lessThanEqualTo === true 
+                ? $this->lessThanEqualTo($max)
+                : $this->lessThan($max) 
+            )
             ;
     }
 
