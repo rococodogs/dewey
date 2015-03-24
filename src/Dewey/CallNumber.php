@@ -30,8 +30,6 @@ class CallNumber {
     // protected $volume;
     // protected $year;
 
-    protected $padding;
-
     /**
      *  wrap the Dewey::parseCallNumber into the Dewey\CallNumber's constructor, so
      *  that anything that can be done with the Dewey class can be done with our object.
@@ -98,8 +96,6 @@ class CallNumber {
     public function calculateNormalizedCallNumber($padding = 0) {
         if ( !is_numeric($padding) ) { $padding = 0; }
 
-        $this->padding['callNumber'] = $padding;
-
         $split = explode(".", $this->callNumber);
         $major = sprintf("%03d", $split[0]);
         $minor = isset($split[1]) ? $split[1] : "";
@@ -125,7 +121,6 @@ class CallNumber {
 
     public function calculateNormalizedCutter($padding = 0) {        
         if ( !is_numeric($padding) ) { $padding = 0; }
-        $this->padding['cutter'] = $padding;
 
         $split = str_split($this->cutter);
 
