@@ -29,6 +29,12 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
             Dewey::calculateRange("740.2x"),
             'Range drills down to tenths'
         );
+
+        $this->assertEquals(
+            array("740.22", "750.22"),
+            Dewey::calculateRange("74x.22"),
+            'If X is before decimal, leaves decimals in range'
+        );
     }
 
     public function testCompareEQEQ() {
