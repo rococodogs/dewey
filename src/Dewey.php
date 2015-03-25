@@ -2,7 +2,7 @@
 
 class Dewey {
 
-    const DDS_FULL_REGEX = "/(\d{1,3})\.?([^\s]*)?\s*([^\s]*)?\s*(.*)?/";
+    const DDS_FULL_REGEX = "/([a-z]+)?\s?(\d{1,3})\.?([^\s]*)?\s*([^\s]*)?\s*(.*)?/i";
 
     /**
      *  calculates range based on *-substituted strings, return as a tuple array
@@ -167,12 +167,14 @@ class Dewey {
         // handle bad Call Number
         if ( empty($matches) ) { throw new \InvalidArgumentException("Malformed Dewey Decimal call number"); }
 
-        $major = $matches[1];
-        $minor = $matches[2];
-        $cutter = $matches[3];
-        $additionalInfo = $matches[4];
+        $prestamp = $matches[1];
+        $major = $matches[2];
+        $minor = $matches[3];
+        $cutter = $matches[4];
+        $additionalInfo = $matches[5];
 
         $cn = new Dewey\CallNumber;
+        $cn->setPrestamp($prestamp);
         $cn->setCallNumber($major . "." . $minor);
         $cn->setCutter($cutter);
         $cn->setAdditional($additionalInfo);

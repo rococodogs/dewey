@@ -122,6 +122,16 @@ class CallNumber {
     }
 
     /**
+     *  getter for the CallNumber::prestamp field
+     *
+     *  @return string
+     */
+
+    public function getPrestamp() {
+        return $this->prestamp;
+    }
+
+    /**
      *  wrapper for CallNumber::compare using the greater-than operator
      *
      *  @param  mixed    call number to compare against (string or Dewey\CallNumber)
@@ -197,7 +207,7 @@ class CallNumber {
      */
 
     public function setAdditional($additional) {
-        $this->additional = $additional;
+        $this->additional = trim($additional);
     }
 
     /**
@@ -207,7 +217,7 @@ class CallNumber {
      */
 
     public function setCallNumber($cn) {
-        $this->callNumber = $cn;
+        $this->callNumber = trim($cn);
     }
 
     /**
@@ -217,7 +227,17 @@ class CallNumber {
      */
 
     public function setCutter($ct) {
-        $this->cutter = $ct;
+        $this->cutter = trim($ct);
+    }
+
+    /**
+     *  setter for the CallNumber::prestamp field
+     *
+     *  @param string
+     */
+
+    public function setPrestamp($ps) {
+        $this->prestamp = trim($ps);
     }
 
     /**
@@ -228,6 +248,6 @@ class CallNumber {
      */
 
     public function __toString() {
-        return trim($this->callNumber . " " . $this->cutter . " " . $this->additional);
+        return implode(" ", array($this->preStamp, $this->callNumber, $this->cutter, $this->additional);
     }
 }
