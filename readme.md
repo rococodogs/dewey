@@ -28,22 +28,22 @@ The `Dewey` class has a few static methods for general use:
 
 ### `Dewey::calculateRange($rangeString)` ###
 
-Calculate the range of DDS call numbers using an `x` to specify where the range takes place.
+Calculate the range of DDS call numbers using an `*` to specify where the range takes place.
 Returns a tuple array of `[$min, $max]`
 
 #### example ####
 
 ```php
-$drawing = Dewey::calculateRange("74x");
+$drawing = Dewey::calculateRange("74*");
 // returns `array("740", "750")`
 ```
 
 range string | returned array
 -------------|---------------
-`7xx`        | `["700", "800"]`
-`74x`        | `["740", "750"]`
-`741.x`      | `["741", "742"]`
-`741.4x`     | `["741.4", "741.5"]`
+`7**`        | `["700", "800"]`
+`74*`        | `["740", "750"]`
+`741.*`      | `["741", "742"]`
+`741.4*`     | `["741.4", "741.5"]`
 
 ### `Dewey::compare($input, $comparison, $operator)` ###
 
