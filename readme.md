@@ -8,10 +8,11 @@ a WIP collection of tools to work w/ Dewey Decimal call numbers
 
 To the best of my (admittedly lacking) knowledge, there is no set terminology to differentiate the whole numbers from the decimals in a Dewey Decimal System call number. Internally, the following terms are used to refer to the different parts:
 
-For the call number `741.4372 A123b c.2 v.3 2004`:
+For the call number `DVD 741.4372 A123b c.2 v.3 2004`:
 
     term     | value
 -------------|------
+`prestamp`   | `DVD`
 `major`      | `741`
 `minor`      | `4372`
 `cutter`     | `A123b`
@@ -45,9 +46,9 @@ range string | returned array
 `741.*`      | `["741", "742"]`
 `741.4*`     | `["741.4", "741.5"]`
 
-### `Dewey::compare($input, $comparison, $operator)` ###
+### `Dewey::compare($input, $comparison, $operator[, $includePrestamp = false])` ###
 
-Compare `$input` to `$comparison` using `$operator`. Accepts: `<`, `>`, `<=`, `>=`, `==`, `===`. Returns a boolean.
+Compare `$input` to `$comparison` using `$operator`. Accepts: `<`, `>`, `<=`, `>=`, `==`, `===`. `$includePrestamp` will involve the prestamp in the comparison. Returns a boolean.
 
 #### example ####
 
