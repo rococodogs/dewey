@@ -81,4 +81,26 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(Dewey::inRange($this->callNumber, "514.*"));
         $this->assertFalse(Dewey::inRange($this->callNumber, $this->callNumber, false));
     }
+
+    public function testParser() {
+        $cn = Dewey::parseCallNumber($this->callNumber);
+
+        $this->assertTrue($cn->hasCutter());
+        $this->assertFalse($cn->hasPrestamp());
+
+        $this->assertEquals("", $cn->getPrestamp());
+        $this->assertEquals("514.123", $cn->getCallNumber());
+        $this->assertEquals("A997x", $cn->getCutter());
+
+        unset($cn);
+
+        $cn = Dewey::parseCallNumber("DVD 791.4372");
+        $this->assertTrue($cn->hasPrestamp());
+        $this->assertFalse($cn->hasCutter());
+
+        $this->assertEquals("DVD", $cn->getPrestamp());
+        $this->assertEquals("791.4372", $cn->getCallNumber());
+        $this->assertEquals("", $cn->getCutter());
+
+    }
 }

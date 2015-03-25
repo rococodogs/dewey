@@ -2,7 +2,7 @@
 
 class Dewey {
 
-    const DDS_FULL_REGEX = "/(\d{1,3})\.?([^\s]*)?\s*([^\s]*)?\s*(.*)?/";
+    const DDS_FULL_REGEX = "/([a-z]+)?\s?(\d{1,3})\.?([^\s]*)?\s*([^\s]*)?\s*(.*)?/i";
 
     /**
      *  calculates range based on *-substituted strings, return as a tuple array
@@ -77,7 +77,7 @@ class Dewey {
      *  @throws InvalidArgumentException
      */
 
-    public static function compare($input, $comp, $operator) {
+    public static function compare($input, $comp, $operator, $includePrestamp = false) {
         if ( !is_a($input, "Dewey\CallNumber") ) {
             $input = self::parseCallNumber($input);
         }
@@ -85,6 +85,28 @@ class Dewey {
         if ( !is_a($comp, "Dewey\CallNumber") ) {
             $comp = self::parseCallNumber($comp);
         }
+
+        if ( !!$includePrestamp ) {
+            $inputPS = $input->getPrestamp();
+            $compPS = $comp->getPrestamp();
+
+            if ( $inputPS !== $compPS ) {
+                switch($operator) {
+                    case ">":
+                    case ">=": return $inputPS > $compPS;
+
+                    case "<":
+                    case "<=": return $inputPS < $compPS;
+
+                    case "==":
+                    case "===": return false;
+
+   
+                    default: throw new \InvalidArgumentException("Invalid operator: [{$operator}]");
+                }
+            }
+
+       }
 
         /**
          *  compare the float vals of each call numbers _first_
@@ -112,8 +134,6 @@ class Dewey {
         /**
          *  If our call number is equal, we need to compare cutters.
          *  We'll pad the shorter cutter with 0s.
-         *
-         *
          */
 
         // check for longest field to pad
@@ -167,12 +187,14 @@ class Dewey {
         // handle bad Call Number
         if ( empty($matches) ) { throw new \InvalidArgumentException("Malformed Dewey Decimal call number"); }
 
-        $major = $matches[1];
-        $minor = $matches[2];
-        $cutter = $matches[3];
-        $additionalInfo = $matches[4];
+        $prestamp = $matches[1];
+        $major = $matches[2];
+        $minor = $matches[3];
+        $cutter = $matches[4];
+        $additionalInfo = $matches[5];
 
         $cn = new Dewey\CallNumber;
+        $cn->setPrestamp($prestamp);
         $cn->setCallNumber($major . "." . $minor);
         $cn->setCutter($cutter);
         $cn->setAdditional($additionalInfo);

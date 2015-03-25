@@ -8,11 +8,12 @@ namespace Dewey;
 class CallNumber {
 
     /**
-     *  stores the call number and the cutter fields
+     *  stores the call number, cutter, and prestamp fields
      */
 
     protected $callNumber;
     protected $cutter;
+    protected $prestamp;
 
     /**
      *  currently, nothing's being done w/ the CallNumber::additional field. maybe sometime
@@ -122,6 +123,16 @@ class CallNumber {
     }
 
     /**
+     *  getter for the CallNumber::prestamp field
+     *
+     *  @return string
+     */
+
+    public function getPrestamp() {
+        return $this->prestamp;
+    }
+
+    /**
      *  wrapper for CallNumber::compare using the greater-than operator
      *
      *  @param  mixed    call number to compare against (string or Dewey\CallNumber)
@@ -141,6 +152,26 @@ class CallNumber {
 
     public function greaterThanEqualTo($comp) {
         return $this->compare($comp, ">=");
+    }
+
+    /**
+     *  checker for CallNumber::cutter field
+     *
+     *  @return boolean
+     */
+
+    public function hasCutter() {
+        return isset($this->cutter) && !empty($this->cutter);
+    }
+
+    /**
+     *  checker for CallNumber::prestamp field
+     *
+     *  @return boolean
+     */
+
+    public function hasPrestamp() {
+        return isset($this->prestamp) && !empty($this->prestamp);
     }
 
     /**
@@ -197,7 +228,7 @@ class CallNumber {
      */
 
     public function setAdditional($additional) {
-        $this->additional = $additional;
+        $this->additional = trim($additional);
     }
 
     /**
@@ -207,7 +238,7 @@ class CallNumber {
      */
 
     public function setCallNumber($cn) {
-        $this->callNumber = $cn;
+        $this->callNumber = trim($cn);
     }
 
     /**
@@ -217,7 +248,17 @@ class CallNumber {
      */
 
     public function setCutter($ct) {
-        $this->cutter = $ct;
+        $this->cutter = trim($ct);
+    }
+
+    /**
+     *  setter for the CallNumber::prestamp field
+     *
+     *  @param string
+     */
+
+    public function setPrestamp($ps) {
+        $this->prestamp = trim($ps);
     }
 
     /**
@@ -228,6 +269,8 @@ class CallNumber {
      */
 
     public function __toString() {
-        return trim($this->callNumber . " " . $this->cutter . " " . $this->additional);
+        return trim(
+            implode(" ", array($this->prestamp, $this->callNumber, $this->cutter, $this->additional))
+        );
     }
 }
