@@ -6,34 +6,42 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
     public function testCalculateRange() {
         $this->assertEquals(
             array("740", "750"),
-            Dewey::calculateRange("74x"),
-            'Range works w/ ones-place X'
+            Dewey::calculateRange("74*"),
+            'Range works w/ ones-place *'
         );
 
         $this->assertEquals(
             array("700", "800"),
-            Dewey::calculateRange("7xx"),
-            'Range works w/ tens-place + ones-place Xs'
+            Dewey::calculateRange("7**"),
+            'Range works w/ tens-place + ones-place *s'
         );
     }
 
     public function testCalculateRangeDecimal() {
         $this->assertEquals(
             array("740.0", "741.0"),
-            Dewey::calculateRange("740.x"),
-            'Range affects ones-place when using single X'
+            Dewey::calculateRange("740.*"),
+            'Range affects ones-place when using single *'
         );
 
         $this->assertEquals(
             array("740.20", "740.30"),
-            Dewey::calculateRange("740.2x"),
+            Dewey::calculateRange("740.2*"),
             'Range drills down to tenths'
         );
 
         $this->assertEquals(
             array("740.22", "750.22"),
-            Dewey::calculateRange("74x.22"),
-            'If X is before decimal, leaves decimals in range'
+            Dewey::calculateRange("74*.22"),
+            'If * is before decimal, leaves decimals in range'
+        );
+    }
+
+    public function testCalculateRangeCutter() {
+        $this->assertEquals(
+            array("813 K5870", "813 K5880"),
+            Dewey::calculateRange("813 K587*"),
+            "Range should work with cutters" 
         );
     }
 
@@ -69,8 +77,8 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testInRange() {
-        $this->assertTrue(Dewey::inRange($this->callNumber, "5xx"));
-        $this->assertTrue(Dewey::inRange($this->callNumber, "514.x"));
+        $this->assertTrue(Dewey::inRange($this->callNumber, "5**"));
+        $this->assertTrue(Dewey::inRange($this->callNumber, "514.*"));
         $this->assertFalse(Dewey::inRange($this->callNumber, $this->callNumber, false));
     }
 }
