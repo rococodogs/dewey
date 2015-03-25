@@ -46,109 +46,6 @@ class CallNumber {
     }
 
     /**
-     *  calculate the normalized CallNumber object (a numerical representation of the full CallNumber)
-     *  TODO: add normalized Additional support
-     *  
-     *  @param  mixed   amount of padding to assign to the CN
-     *                  if numeric value, add that to callNumber, cutter, and additional values
-     *                  if array, use values assigned to keys:
-     *                      `callNumber`, `cutter`, `additional`
-     *  @return string  normalized CallNumber value
-     */
-
-    public function calculateNormalized($padding = array()) {
-        if ( !is_array($padding) ) {
-            $val = intval($padding);
-            $padding = array(
-                'callNumber' => $val,
-                'cutter' => $val,
-                'additional' => $val
-            );
-        } else {
-            $padding = array_merge(array(
-                'callNumber' => 0,
-                'cutter' => 0,
-                'additional' => 0
-            ), $padding);
-        }
-
-        $cnNorm = $this->calculateNormalizedCallNumber($padding['callNumber']);
-        $ctNorm = $this->calculateNormalizedCutter($padding['cutter']);
-        $adNorm = $this->calculateNormalizedAdditional($padding['additional']);
-
-        return $cnNorm . $ctNorm . $adNorm;
-    }
-
-    /**
-     *  calculates the 'normalized' call number (a numeric representation of the call number).
-     *
-     *      ex. `741.4372` becomes `7414372`
-     *
-     *  if $padding is provided, the string is zero-padded to contain that many digits
-     *
-     *      ex. `741.4372` with a padding of 9 becomes `741437200`
-     *      ex. `741.4372` with a padding of 4 remains the same
-     *
-     *  @param  int/numeric  the minimum length of the string, the remaining spots are zero-padded
-     *  @return string
-     */
-
-    public function calculateNormalizedCallNumber($padding = 0) {
-        if ( !is_numeric($padding) ) { $padding = 0; }
-
-        $split = explode(".", $this->callNumber);
-        $major = sprintf("%03d", $split[0]);
-        $minor = isset($split[1]) ? $split[1] : "";
-        $joined = $major . $minor;
-
-        return str_pad($joined, $padding, "0", STR_PAD_RIGHT);
-    }
-
-    /**
-     *  calculates the 'normalized' cutter (a numeric representation of the cutter).
-     *
-     *      ex. `A123x` becomes `0112324`
-     *
-     *  note: all letters are replaced with a two-digit number (`a` becomes `01`, `z` becomes `26`)
-     *
-     *  if $padding is provided, the string is zero-padded to contain that many digits
-     *
-     *      ex. `A12x` with a padding of 7 becomes `0112240`
-     *
-     *  @param  int/numeric  the minimum length of the string, the remaining spots are zero-padded
-     *  @return string
-     */
-
-    public function calculateNormalizedCutter($padding = 0) {        
-        if ( !is_numeric($padding) ) { $padding = 0; }
-
-        $split = str_split($this->cutter);
-
-        if ( empty($split) ) { return str_pad($this->cutter, $padding); }
-
-        $normalized = "";
-
-        foreach($split as $s) {
-            if ( $s === "" || $s === " " ) { continue; }
-            
-            $pos = stripos("abcdefghijklmnopqrstuvwxyz", $s);
-            if ( $pos === false ) { $normalized .= intval($s); }
-            else { $normalized .= sprintf("%02d", $pos + 1); }
-        }
-
-        return str_pad($normalized, $padding, "0", STR_PAD_RIGHT);
-    }
-
-    /**
-     *  TODO: implement the Additional Info field
-     */
-
-    public function calculateNormalizedAdditional($padding = 0) {
-        //return str_pad("", $padding, "0");
-        return "";
-    }
-
-    /**
      *  compares instance CallNumber against given call number (string or object)
      *  by $operator
      *
@@ -185,26 +82,23 @@ class CallNumber {
 
     /**
      *  return the length of the call number. since this may refer to a) the CallNumber as a whole
-     *  (including cutter), b) just the call numbers (xxx.xxxx), or c) the normalized call number 
-     *  length, the $normalized parameter may also be an array of options with the keys:
-     *      `normalized`, and `includeCutter`
+     *  (including cutter), or b) just the call numbers (xxx.xxxx), the option to include the cutter
+     *  is included as the sole parameter
      *
-     *  @param  mixed       array of options, or boolean to get length of normalized call number
-     *  @param  boolean     if $normalized is _not_ an array, is a boolean to include the cutter in the length
+     *  @param  boolean     include the cutter in the length?
      *  @return int
      */
 
-    public function getCallNumberLength($normalized = false, $includeCutter = false) { 
-        if ( is_array($normalized) ) {
-            $opts = $normalized;
-            $normalized = isset($opts['normalized']) ? $opts['normalized'] : false;
-            $includeCutter = isset($opts['includeCutter']) ? $opts['includeCutter'] : false;
-        }
+    public function getCallNumberLength($includeCutter = false) { 
 
-        return !!$normalized
-                ? strlen(str_replace(".", "", $this->callNumber))
-                : $this->getNormalizedCallNumberLength($includeCutter)
-                ; 
+        return strlen(
+                str_replace(
+                    array(".", " "), 
+                    "", 
+                    $this->callNumber . 
+                    (!!$includeCutter ? $this->cutter : "")
+                )
+               ); 
     }
 
     /**
@@ -218,46 +112,13 @@ class CallNumber {
     }
 
     /**
-     *  returns the length of the cutter. if $normalized is true, will pad
-     *  A-Z to two places (so that A == 01, Z == 26)
+     *  returns the length of the cutter.
      *
-     *  @param  boolean  whether to normalize letters (convert A-Z to two-digit number)
      *  @return int
      */
 
-    public function getCutterLength($normalized = false) {
-        if ( $normalized ) {
-            return $this->getNormalizedCutterLength();
-        }
-
-        $c = preg_replace("/\s/", "", $this->cutter);
+    public function getCutterLength() {
         return strlen($this->cutter);
-    }
-
-    /**
-     *  retrieves the length of the 'normalized' call number length
-     *
-     *  @param  boolean     optional (default is `false`): whether to include the cutter in the length
-     *  @return int 
-     */
-
-    public function getNormalizedCallNumberLength($includeCutter = false) {
-        $l = strlen(str_replace(".", "", $this->callNumber));
-        return !!$includeCutter 
-                ? $l + $this->getNormalizedCutterLength()
-                : $l
-                ;
-    }
-
-    /**
-     *  retrieves the length of the normalized cutter
-     *
-     *  @return int
-     */
-
-    public function getNormalizedCutterLength() {
-        $c = preg_replace("/\s/", "", $this->cutter);
-        return strlen(preg_replace("/[a-z]/i", "xx", $this->cutter));
     }
 
     /**

@@ -87,29 +87,53 @@ class Dewey {
             $comp = self::parseCallNumber($comp);
         }
 
+        /**
+         *  compare the float vals of each call numbers _first_
+         *  then, if need be, move on to the normalized cutters
+         */
+
+        $inputCNfloat = floatval($input->getCallNumber());
+        $compCNfloat = floatval($comp->getCallNumber());
+
+        if ( $inputCNfloat !== $compCNfloat ) {
+            switch($operator) {
+                case ">" :
+                case ">=": return $inputCNfloat > $compCNfloat;
+
+                case "<" :
+                case "<=": return $inputCNfloat < $compCNfloat;
+
+                case "==" :
+                case "===": return false;
+
+                default: throw new \InvalidArgumentException("Invalid operator: [{$operator}]");
+            }
+        }
+
+        /**
+         *  If our call number is equal, we need to compare cutters.
+         *  We'll pad the shorter cutter with 0s.
+         *
+         *
+         */
+
         // check for longest field to pad
-        $inputCNLength = $input->getNormalizedCallNumberLength();
-        $compCNLength = $comp->getNormalizedCallNumberLength();
-        $inputCTLength = $input->getNormalizedCutterLength();
-        $compCTLength = $comp->getNormalizedCutterLength();
+        $inputCTLength = $input->getCutterLength();
+        $compCTLength = $comp->getCutterLength();
+        $padding = $inputCTLength > $compCTLength ? $inputCTLength : $compCTLength;
 
-        $padding = array(
-            'callNumber' => $inputCNLength > $compCNLength ? $inputCNLength : $compCNLength,
-            'cutter'     => $inputCTLength > $compCTLength ? $inputCTLength : $compCTLength
-        );
-
-        $inputNormalized = $input->calculateNormalized($padding);
-        $compNormalized = $comp->calculateNormalized($padding);
+        $inputCT = str_pad($input->getCutter(), $padding, "0", STR_PAD_RIGHT);
+        $compCT = str_pad($comp->getCutter(), $padding, "0", STR_PAD_RIGHT);
 
         switch($operator) {
-            case ">":  return $inputNormalized >  $compNormalized;
-            case "<":  return $inputNormalized <  $compNormalized;
-            case "<=": return $inputNormalized <= $compNormalized;
-            case ">=": return $inputNormalized >= $compNormalized;
-            case "==": return $inputNormalized == $compNormalized;
+            case ">":  return strtolower($inputCT) >  strtolower($compCT);
+            case "<":  return strtolower($inputCT) <  strtolower($compCT);
+            case "<=": return strtolower($inputCT) <= strtolower($compCT);
+            case ">=": return strtolower($inputCT) >= strtolower($compCT);
+            case "==": return strtolower($inputCT) == strtolower($compCT);
 
             // unneccessary but available
-            case "===": return $inputNormalized === $compNormalized;
+            case "===": return strtolower($inputCT) === strtolower($compCT);
             default: throw new \InvalidArgumentException("Invalid operator: [{$operator}]");
         }
     }
