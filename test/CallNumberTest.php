@@ -6,12 +6,6 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
     protected $callNumber = "514.123";
     protected $cutter = "A987x";
 
-    protected $normalized           = "5141230198724";
-    protected $normalizedLessDigits = "5141000198724";
-    protected $normalizedCNPadded   = "514123000198724";
-    protected $normalizedCTPadded   = "51412301987240";
-    protected $normalizedPadded     = "5141230001987240";
-
     public function setUp() {
         $this->cn = new Dewey\CallNumber;
         $this->cn->setCallNumber($this->callNumber);
@@ -23,28 +17,6 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
             $this->callNumberString, 
             $this->cn . '',
             'CallNumber prints as a readable DDS call number'
-        );
-    }
-
-    public function testCalculateNormalizedCutter() {
-        $ct = "0198724";
-        
-        $this->assertEquals(
-            $ct, 
-            $this->cn->calculateNormalizedCutter(),
-            'no padding'
-        );
-        
-        $this->assertEquals(
-            $ct, 
-            $this->cn->calculateNormalizedCutter($this->cn->getNormalizedCutterLength() - 1),
-            'slight pading'
-        );
-
-        $this->assertEquals(
-            $ct . "00", 
-            $this->cn->calculateNormalizedCutter($this->cn->getNormalizedCutterLength() + 2), 
-            'noticeable padding'
         );
     }
 
@@ -66,14 +38,7 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
     public function testGetCutterLength() {
         $this->assertEquals(
             5, 
-            $this->cn->getCutterLength(),
-            'Getting the cutter length should return not normalized length'
-        );
-
-        $this->assertEquals(
-            7,
-            $this->cn->getCutterLength(true),
-            'Passing `true` to getCutterLength will calculate normalized cutter length'
+            $this->cn->getCutterLength()
         );
     }
 
@@ -144,37 +109,6 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(
             $this->cn->lessThanEqualTo($this->cn),
             'lessThanEqualTo self should return true'
-        );
-    }
-
-    public function testNormalized() {
-        $this->assertEquals($this->normalized, $this->cn->calculateNormalized());
-    }
-
-    public function testNormalizedCallNumberPadding() {
-        $this->assertEquals(
-            $this->normalizedCNPadded,
-            $this->cn->calculateNormalized(array('callNumber' => 8))
-        );
-
-        $this->cn->setCallNumber("514.1");
-        $this->assertEquals(
-            $this->normalizedLessDigits,
-            $this->cn->calculateNormalized(array('callNumber' => 6))
-        );
-    }
-
-    public function testNormalizedCutterPadding() {        
-        $this->assertEquals(
-            $this->normalizedCTPadded,
-            $this->cn->calculateNormalized(array('cutter' => 8))
-        );
-    }
-
-    public function testNormalizedPadding() {
-        $this->assertEquals(
-            $this->normalizedPadded,
-            $this->cn->calculateNormalized(array('callNumber' => 8, 'cutter' => 8))
         );
     }
 }

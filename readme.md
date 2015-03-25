@@ -18,7 +18,7 @@ For the call number `741.4372 A123b c.2 v.3 2004`:
 `additional` | `c.2 v.3 2004`
 `call number`| `741.4372`
 
-What's also a bit confusing is the differentiation between a call number and a CallNumber object. Unless specifically referencing the CallNumber object's $callNumber field, the camel-cased CallNumber refers to the object and lowere cased `call number` refers to the major/minor combination.
+What's also a bit confusing is the differentiation between a call number and a CallNumber object. Unless specifically referencing the CallNumber object's $callNumber field, the camel-cased CallNumber refers to the object and lower-cased `call number` refers to the major/minor combination.
 
 Please add an issue if you've got some suggestions re: clearing the code up!
 
@@ -76,7 +76,7 @@ var_dump(Dewey::parseCallNumber("741.4372 A123x"));
 
 ### `Dewey\CallNumber` ###
 
-A `CallNumber` object is a representation of a DDS call number. To compare one against another, a "normalized" numeric representation is calculated. The decimal + and spaces are removed, alphabetical characters are converted to a two-digit representation, and these numbers are padded with zeros to match the longer of the two being compared. The call number, cutter, and (eventually) additional information are calculated seperately and joined together.
+A `CallNumber` object is a representation of a DDS call number.
 
 An object can be constructed by using `Dewey::parseCallNumber` or by instantiating a `new Dewey\CallNumber` with a DDS call number string as a parameter (which uses the former under the hood anyway).
 
