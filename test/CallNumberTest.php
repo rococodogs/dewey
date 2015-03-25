@@ -61,6 +61,14 @@ class CallNumberTest extends PHPUnit_Framework_TestCase {
         );
     }
 
+    public function testHasMethods() {
+        $this->assertTrue($this->cn->hasCutter());
+        $this->assertFalse($this->cn->hasPrestamp());
+
+        $this->cn->setPrestamp("DVD");
+        $this->assertTrue($this->cn->hasPrestamp());
+    }
+
     public function testInRange() {
         $ranges = array("5**", "51*", "514.*", "514.1*", "514.12*", "514.123*", "514.123 A98*");
         foreach($ranges as $range) {
