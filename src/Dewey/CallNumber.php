@@ -8,11 +8,12 @@ namespace Dewey;
 class CallNumber {
 
     /**
-     *  stores the call number and the cutter fields
+     *  stores the call number, cutter, and prestamp fields
      */
 
     protected $callNumber;
     protected $cutter;
+    protected $prestamp;
 
     /**
      *  currently, nothing's being done w/ the CallNumber::additional field. maybe sometime
@@ -154,6 +155,26 @@ class CallNumber {
     }
 
     /**
+     *  checker for CallNumber::cutter field
+     *
+     *  @return boolean
+     */
+
+    public function hasCutter() {
+        return isset($this->cutter) && !empty($this->cutter);
+    }
+
+    /**
+     *  checker for CallNumber::prestamp field
+     *
+     *  @return boolean
+     */
+
+    public function hasPrestamp() {
+        return isset($this->prestamp) && !empty($this->prestamp);
+    }
+
+    /**
      *  does this call number fall between the ranges specified? can use
      *  DDS call number string or a Dewey\CallNumber object
      *
@@ -248,6 +269,8 @@ class CallNumber {
      */
 
     public function __toString() {
-        return implode(" ", array($this->preStamp, $this->callNumber, $this->cutter, $this->additional);
+        return trim(
+            implode(" ", array($this->prestamp, $this->callNumber, $this->cutter, $this->additional))
+        );
     }
 }
