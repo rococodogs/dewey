@@ -77,7 +77,7 @@ class Dewey {
      *  @throws InvalidArgumentException
      */
 
-    public static function compare($input, $comp, $operator) {
+    public static function compare($input, $comp, $operator, $includePrestamp = false) {
         if ( !is_a($input, "Dewey\CallNumber") ) {
             $input = self::parseCallNumber($input);
         }
@@ -85,6 +85,28 @@ class Dewey {
         if ( !is_a($comp, "Dewey\CallNumber") ) {
             $comp = self::parseCallNumber($comp);
         }
+
+        if ( !!$includePrestamp ) {
+            $inputPS = $input->getPrestamp();
+            $compPS = $comp->getPrestamp();
+
+            if ( $inputPS !== $compPS ) {
+                switch($operator) {
+                    case ">":
+                    case ">=": return $inputPS > $compPS;
+
+                    case "<":
+                    case "<=": return $inputPS < $compPS;
+
+                    case "==":
+                    case "===": return false;
+
+   
+                    default: throw new \InvalidArgumentException("Invalid operator: [{$operator}]");
+                }
+            }
+
+       }
 
         /**
          *  compare the float vals of each call numbers _first_
@@ -112,8 +134,6 @@ class Dewey {
         /**
          *  If our call number is equal, we need to compare cutters.
          *  We'll pad the shorter cutter with 0s.
-         *
-         *
          */
 
         // check for longest field to pad
