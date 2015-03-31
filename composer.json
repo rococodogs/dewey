@@ -1,4 +1,22 @@
 {
+    "name": "malantonio/dewey",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Malantonio",
+            "email": "adam.malantonio@gmail.com",
+            "homepage": "https://github.com/malantonio",
+            "role": "Developer"
+        }
+    ],
+
+    "homepage": "https://github.com/malantonio/dewey",
+
+    "support": {
+        "issues": "https://github.com/malantonio/dewey/issues"
+    },
+
     "require": {
         "php": ">=5.3.13"
     },
