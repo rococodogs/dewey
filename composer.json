@@ -1,6 +1,7 @@
 {
     "name": "malantonio/dewey",
-    "version": "1.0.0",
+    "description": "Parse and compare Dewey Decimal System call numbers.",
+    "version": "1.0.1",
     "license": "MIT",
     "authors": [
         {

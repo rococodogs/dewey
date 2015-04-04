@@ -28,8 +28,6 @@ class Dewey {
         // master number w/o decimal (we'll replace it later)
         $master = preg_replace("/\./", "", $rangeString);
         $length = strlen($master);
-        $lastCharPlace = $length - 1;
-        $xPos = array();
 
         for ( $i = 0; $i < $length; $i++ ) {
             $char = $master[$i];
