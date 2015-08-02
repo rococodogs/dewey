@@ -23,43 +23,84 @@ class Dewey {
         $max = "";
 
         $decimalLocation = stripos($rangeString, ".");
-        
-
-        // master number w/o decimal (we'll replace it later)
-        $master = preg_replace("/\./", "", $rangeString);
-        $length = strlen($master);
+        $length = strlen($rangeString);
 
         for ( $i = 0; $i < $length; $i++ ) {
-            $char = $master[$i];
+            $curr = $rangeString[$i];
 
-            // any numeric, space, or letter character gets added automatically
-            if ( preg_match("/[0-9a-z\s]/i", $char) ) {
-                $min .= $char;
-                $max .= $char;
+            $prevPos = $i - 1;
+            if ( $prevPos === $decimalLocation ) $prevPos--;
+
+            $prev = $prevPos > -1 ? $rangeString[$prevPos] : "";
+            $prevInt = intval($prev);
+
+            if ( $i === $decimalLocation ) {
+                $min .= ".";
+                $max .= ".";
+                continue;
             }
 
-            elseif ( preg_match("/\*/i", $char) ) {
+            // any numeric, space, or letter character gets added automatically
+            if ( preg_match("/[0-9a-z\s]/i", $curr) ) {
+                $min .= $curr;
+                $max .= $curr;
+            }
+
+            elseif ( $curr === "*" ) {
                 // if we're at the first character, we need to stuff these values
                 if ( $i === 0 ) {
                     $min .= "0";
                     $max .= "1";
                     continue;
-                } 
-
-                $prevChar = $master[$i - 1];
-                if ( $prevChar !== "*" ) {
-                    $num = intval($prevChar);
-                    $max[$i - 1] = ++$num;
                 }
 
-                $min .= "0";
-                $max .= "0";
-            }
-        }
+                // if we've handled this already, we just append zeros
+                if ( $prev === "*" ) {
+                    $min .= "0";
+                    $max .= "0";
+                    continue;
+                }
 
-        if ( $decimalLocation !== false ) {
-            $min = substr($min, 0, $decimalLocation) . "." . substr($min, $decimalLocation);
-            $max = substr($max, 0, $decimalLocation) . "." . substr($max, $decimalLocation);
+                // 78* becomes [780, 790]
+                if ( $prev !== "9" ) {
+                    // advance the previous number of the max
+                    $max[$prevPos] = ++$prevInt;
+
+                    // + add zeros
+                    $min .= "0";
+                    $max .= "0";
+                    continue;
+                }
+
+                // headache inducing 9 case
+                else {
+                    $eos = false;
+                    while (++$prevInt === 10) {
+                        $max[$prevPos] = "0";
+
+                        $prevPos--;
+
+                        if ( $prevPos < 0 ) {
+                            $max[0] = "0";
+                            $max = "1" . $max;
+                            $eos = true;
+                            break;
+                        }
+
+                        if ( !is_numeric($rangeString[$prevPos]) && $prevPos > 0 ) $prevPos--;
+
+                        $prev = $rangeString[$prevPos];
+                        $prevInt = intval($prev);
+                    }
+
+                    // if we haven't reached the end of the rangeString,
+                    // we'll need to change the number where we left off
+                    if (!$eos) $max[$prevPos] = $prevInt;
+
+                    $min .= "0";
+                    $max .= "0";
+                }
+            }
         }
 
         return array($min, $max);

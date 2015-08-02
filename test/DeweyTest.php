@@ -15,6 +15,18 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
             Dewey::calculateRange("7**"),
             'Range works w/ tens-place + ones-place *s'
         );
+
+        $this->assertEquals(
+            array("790", "800"),
+            Dewey::calculateRange("79*"),
+            "Range calculates into next hundreds"
+        );
+
+        $this->assertEquals(
+            array("990", "1000"),
+            Dewey::calculateRange("99*"),
+            "Range handles upper range"
+        );
     }
 
     public function testCalculateRangeDecimal() {
@@ -34,6 +46,12 @@ class DeweyTest extends PHPUnit_Framework_TestCase {
             array("740.22", "750.22"),
             Dewey::calculateRange("74*.22"),
             'If * is before decimal, leaves decimals in range'
+        );
+
+        $this->assertEquals(
+            array("709", "710"),
+            Dewey::calculateRange("709.*"),
+            "Range handles the transfer from 9 to 10 within a hundred"
         );
     }
 
