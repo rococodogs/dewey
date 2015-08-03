@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/malantonio/dewey.svg?branch=travis-support)](https://travis-ci.org/malantonio/dewey)
 
-a WIP collection of tools to work w/ Dewey Decimal call numbers
+a collection of tools to work w/ Dewey Decimal call numbers
 
 ## some terminology explanation ##
 
